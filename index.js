@@ -3,7 +3,19 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path'); 
 
+//.env before Note to ensure that the environment variables from the .env file are available globally b
+require('dotenv').config() 
 const app = express();
+
+const Note = require('./models/note');
+
+// DO NOT SAVE YOUR PASSWORD TO GITHUB!!
+// const password = process.argv[2]
+// const url = `mongodb+srv://syntaxmonkey2px:${password}@cluster0.4ko9m.mongodb.net/noteApp?retryWrites=true&w=majority&appName=Cluster0`;
+
+
+// mongoose.connect(url)
+
 
 // Middleware
 app.use(cors());
@@ -25,8 +37,12 @@ let notes = [
 
 // API routes
 app.get('/api/notes', (request, response) => {
-  response.json(notes);
-});
+  Note.findById(request.params.id).then(notes => {
+    response.json(notes)
+  })
+})
+
+
 
 app.get('/api/notes/:id', (request, response) => {
   const id = request.params.id;
@@ -38,13 +54,25 @@ app.get('/api/notes/:id', (request, response) => {
   }
 });
 
+// app.post('/api/notes', (request, response) => {
+//   const maxId = notes.length > 0 ? Math.max(...notes.map(n => Number(n.id))) : 0;
+//   const note = request.body;
+//   note.id = String(maxId + 1);
+//   notes = notes.concat(note);
+//   console.log(note);
+//   response.json(note);
+// });
+
 app.post('/api/notes', (request, response) => {
-  const maxId = notes.length > 0 ? Math.max(...notes.map(n => Number(n.id))) : 0;
-  const note = request.body;
-  note.id = String(maxId + 1);
-  notes = notes.concat(note);
-  console.log(note);
-  response.json(note);
+  const body = request.body;
+  const note = new Note({
+    content: body.content,
+    important: body.important || false,
+  });
+  note.save()
+    .then(savedNote => {
+      response.json(savedNote);
+    });
 });
 
 app.delete('/api/notes/:id', (request, response) => {
@@ -63,6 +91,8 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');
 });
+
+
 
 // Start the server
 const PORT = process.env.PORT || 3001;
