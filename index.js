@@ -1,13 +1,14 @@
-const http = require('http');
-const express = require('express');
-const cors = require('cors');
-const path = require('path'); 
-
 //.env before Note to ensure that the environment variables from the .env file are available globally b
 require('dotenv').config() 
+// const http = require('http');
+const express = require('express');
+// const cors = require('cors');
+// const path = require('path'); 
+const Note = require('./models/note');
+
+
 const app = express();
 
-const Note = require('./models/note');
 
 // DO NOT SAVE YOUR PASSWORD TO GITHUB!!
 // const password = process.argv[2]
