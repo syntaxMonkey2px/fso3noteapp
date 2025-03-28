@@ -1,9 +1,9 @@
 //.env before Note to ensure that the environment variables from the .env file are available globally b
-require('dotenv').config() 
-// const http = require('http');
+require('dotenv').config();
+
 const express = require('express');
-// const cors = require('cors');
-// const path = require('path'); 
+const cors = require('cors');
+const path = require('path'); 
 const Note = require('./models/note');
 
 
@@ -36,45 +36,49 @@ let notes = [
   { id: "3", content: "GET and POST are the most important methods of HTTP protocol", important: true }
 ];
 
+
+
 // API routes
-app.get('/api/notes', (request, response) => {
-  Note.findById(request.params.id).then(notes => {
-    response.json(notes)
-  })
-})
+app.get('/api/notes/:id', (request, response, next) => {
+  Note.findById(request.params.id)
+    .then(note => {
+      if(note){
+      response.json(notes)
+      }else{
+        response.status(404).end();
+      }
+    })
+    .catch(error => next(error))
+    })
 
 
 
-app.get('/api/notes/:id', (request, response) => {
-  const id = request.params.id;
-  const note = notes.find(note => note.id === id);
-  if (note) {
-    response.json(note);
-  } else {
-    response.status(404).end();
-  }
-});
-
-// app.post('/api/notes', (request, response) => {
-//   const maxId = notes.length > 0 ? Math.max(...notes.map(n => Number(n.id))) : 0;
-//   const note = request.body;
-//   note.id = String(maxId + 1);
-//   notes = notes.concat(note);
-//   console.log(note);
-//   response.json(note);
-// });
 
 app.post('/api/notes', (request, response) => {
   const body = request.body;
+
+  if (!body.content) {
+    return response.status(400).json({
+      error: 'content missing'
+    });
+  }
+
   const note = new Note({
     content: body.content,
     important: body.important || false,
   });
+  
   note.save()
     .then(savedNote => {
-      response.json(savedNote);
-    });
-});
+      response.json(savedNote)
+    })
+    .catch(error => {
+      console.error(error);
+      response.status(500).json({
+        error: 'Failed to save note'
+      });
+    })
+  });
 
 app.delete('/api/notes/:id', (request, response) => {
   const id = request.params.id;
@@ -82,10 +86,12 @@ app.delete('/api/notes/:id', (request, response) => {
   response.status(204).end();
 });
 
+
 // Catch-all route for serving index.html for any other requests
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -93,6 +99,17 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke!');
 });
 
+const errorHandler = (error, request, response, next) =>{
+  console.error(error.message)
+
+  if(error.name === 'CastError'){
+    return response.status(400).send({ error: 'malformatted id'})
+  }
+  
+  next(error)
+}
+
+app.use(errorHandler)
 
 
 // Start the server
