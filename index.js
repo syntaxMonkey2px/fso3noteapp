@@ -9,15 +9,6 @@ const Note = require('./models/note');
 
 const app = express();
 
-
-// DO NOT SAVE YOUR PASSWORD TO GITHUB!!
-// const password = process.argv[2]
-// const url = `mongodb+srv://syntaxmonkey2px:${password}@cluster0.4ko9m.mongodb.net/noteApp?retryWrites=true&w=majority&appName=Cluster0`;
-
-
-// mongoose.connect(url)
-
-
 // Middleware
 app.use(cors());
 app.use(express.json());
