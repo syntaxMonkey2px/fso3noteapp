@@ -3,3 +3,5 @@
 
 # Ignore node_modules directory
 node_modules/
+
+!node_modules/vite/dist/node/chunks/dep-DDxXL6bt.js
