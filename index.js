@@ -46,7 +46,14 @@ app.get('/api/notes/:id', (request, response, next) => {
     })
 
 
-
+const noteScheme = new mongoose.Schema({
+  content:{
+    type: String,
+    minLength: 5,
+    required: true
+  },
+  important: Boolean
+})
 
 app.post('/api/notes', (request, response) => {
   const body = request.body;
@@ -98,7 +105,10 @@ const errorHandler = (error, request, response, next) =>{
 
   if(error.name === 'CastError'){
     return response.status(400).send({ error: 'malformatted id'})
+  }else if(error,name === 'ValidationError'){
+    return response.status(400).json({error: error.message})
   }
+  
   
   next(error)
 }
