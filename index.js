@@ -65,9 +65,8 @@ app.post('/api/notes', (request, response, next) => {
     .then(savedNote => {
       response.json(savedNote)
     })
-    .catch(error => {
-      console.error(error => next(error));
-    })
+    .catch(error => next(error));
+    
   });
 
 app.delete('/api/notes/:id', (request, response) => {
