@@ -47,7 +47,7 @@ app.get('/api/notes/:id', (request, response, next) => {
 
 
 
-app.post('/api/notes', (request, response) => {
+app.post('/api/notes', (request, response, next) => {
   const body = request.body;
 
   if (!body.content) {
@@ -59,17 +59,14 @@ app.post('/api/notes', (request, response) => {
   const note = new Note({
     content: body.content,
     important: body.important || false,
-  });
+  })
   
   note.save()
     .then(savedNote => {
       response.json(savedNote)
     })
     .catch(error => {
-      console.error(error);
-      response.status(500).json({
-        error: 'Failed to save note'
-      });
+      console.error(error => next(error));
     })
   });
 
@@ -100,7 +97,6 @@ const errorHandler = (error, request, response, next) =>{
   }else if(error,name === 'ValidationError'){
     return response.status(400).json({error: error.message})
   }
-  
   
   next(error)
 }
