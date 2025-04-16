@@ -46,14 +46,6 @@ app.get('/api/notes/:id', (request, response, next) => {
     })
 
 
-const noteScheme = new mongoose.Schema({
-  content:{
-    type: String,
-    minLength: 5,
-    required: true
-  },
-  important: Boolean
-})
 
 app.post('/api/notes', (request, response) => {
   const body = request.body;
