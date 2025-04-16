@@ -13,7 +13,7 @@ mongoose.set('strictQuery',false)
 
 mongoose.connect(url)
 
-const noteScheme = new mongoose.Schema({
+const noteSchema = new mongoose.Schema({
   content:{
     type: String,
     minLength: 5,
