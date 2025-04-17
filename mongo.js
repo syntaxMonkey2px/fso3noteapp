@@ -9,12 +9,12 @@ const password = process.argv[2]
 
 const url = `mongodb+srv://syntaxmonkey2px:${password}@cluster0.4ko9m.mongodb.net/noteApp?retryWrites=true&w=majority&appName=Cluster0`
 
-mongoose.set('strictQuery',false)
+mongoose.set('strictQuery', false)
 
 mongoose.connect(url)
 
 const noteSchema = new mongoose.Schema({
-  content:{
+  content: {
     type: String,
     minLength: 5,
     required: true
@@ -31,15 +31,15 @@ const note = new Note({
 
 // text code
 note.save().then(result => {
-  console.log('note saved!')
+  console.log('note saved!', result)
   mongoose.connection.close()
 })
 
 Note.find({}).then(result => {
-    result.forEach(note => {
-      console.log(note)
-    })
-    mongoose.connection.close()
+  result.forEach(note => {
+    console.log(note)
   })
+  mongoose.connection.close()
+})
 
 
