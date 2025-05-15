@@ -1,20 +1,6 @@
 const mongoose = require('mongoose')
 
-// Load environment variables from .env file
-mongoose.set('strictQuery', false)
 
-const url = process.env.MONGODB_URI
-console.log('connecting to', url)
-
-
-// Connect to MongoDB
-mongoose.connect(url)
-  .then(result => {
-    console.log('connected to MongoDB', result)
-  })
-  .catch(error => {
-    console.log('error connecting to MongoDB:', error.message)
-  })
 
 // Define the Note schema
 const noteSchema = new mongoose.Schema({

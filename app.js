@@ -1,3 +1,4 @@
+require('express-async-errors')
 const express = require('express')
 const mongoose = require('mongoose')
 const config = require('./utils/config')
@@ -8,6 +9,9 @@ const middleware = require('./utils/middleware')
 const app = express()
 
 logger.info('connecting to', config.MONGODB_URI)
+
+// Load environment variables from .env file
+mongoose.set('strictQuery', false)
 
 mongoose
   .connect(config.MONGODB_URI)
